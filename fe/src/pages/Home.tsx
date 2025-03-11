@@ -8,9 +8,30 @@ const Home: React.FC = () => {
             <div className="flex items-center justify-center">
                 <img src="/src/assets/favicon.png" alt="logo" className="w-2/3 h-auto -my-5" />
             </div>
-            <NavLink to={"/"} className="hover:bg-gray-300 flex items-center justify-center">Home</NavLink>
-            <NavLink to={"/"} className="hover:bg-gray-300 flex items-center justify-center">Notes</NavLink>
-            <NavLink to={"/"} className="hover:bg-gray-300 flex items-center justify-center">Tasks</NavLink>
+            <NavLink
+                to="/"
+                className={({ isActive }) =>
+                    isActive ? "bg-gray-300 flex items-center justify-center" : "hover:bg-gray-300 flex items-center justify-center"
+                }
+            >
+                Home
+            </NavLink>
+            <NavLink
+                to="/notes"
+                className={({ isActive }) =>
+                    isActive ? "bg-gray-300 flex items-center justify-center" : "hover:bg-gray-300 flex items-center justify-center"
+                }
+            >
+                Notes
+            </NavLink>
+            <NavLink
+                to="/tasks"
+                className={({ isActive }) =>
+                    isActive ? "bg-gray-300 flex items-center justify-center" : "hover:bg-gray-300 flex items-center justify-center"
+                }
+            >
+                Tasks
+            </NavLink>
         </div>
         <div className="flex flex-col">
             <span className="font-bold text-4xl bg-gray-300 w-full h-1/5 flex justify-center items-center">Hello, welcome to your smart workspace!</span>
