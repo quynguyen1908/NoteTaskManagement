@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { RollbackOutlined, CalendarOutlined } from "@ant-design/icons";
 import { DatePicker } from "antd";
+import Modal from "react-modal";
 import dayjs from "dayjs"; // Import để xử lý ngày tháng
 import { Task } from "../../types/Task";
 import { deleteTask, getTaskById, updateTask } from "../../api/taskApi";
@@ -18,6 +19,7 @@ const TaskDetail: React.FC = () => {
   const [place, setPlace] = useState<string>("");
   const [isChanged, setIsChanged] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -77,6 +79,14 @@ const TaskDetail: React.FC = () => {
     }
   };
 
+  const openModal = () => {
+      setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+      setModalIsOpen(false);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -89,6 +99,7 @@ const TaskDetail: React.FC = () => {
             placeholder="Title"
             type="text"
             id="title"
+            required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={50}
@@ -100,6 +111,7 @@ const TaskDetail: React.FC = () => {
         <div className="w-5/9 pr-8">
           <div className="w-full h-120">
             <textarea
+              required
               placeholder="Description..."
               id="description"
               value={description}
@@ -114,7 +126,7 @@ const TaskDetail: React.FC = () => {
         <div className="flex space-x-4 absolute bottom-4 right-4">
             <button
               type="button"
-              onClick={handleDelete}
+              onClick={openModal}
               className="bg-red-700 text-xl font-bold text-white py-2 px-4 rounded-md hover:bg-red-500"
             >
               Delete
@@ -131,13 +143,14 @@ const TaskDetail: React.FC = () => {
           <div className="flex items-center mb-4 space-x-4">
             <div className="flex items-center space-x-2">
               <div className="flex flex-col items-center">
-                <CalendarOutlined className="text-8xl" />
-                <span className="text-xl font-bold">Begin</span>
+              <CalendarOutlined className="text-8xl" />
+              <span className="text-xl font-bold">Begin</span>
               </div>
               <DatePicker
-                onChange={(date) => setBeginDate(date)}
-                value={beginDate}
-                placeholder="Begin Date"
+              onChange={(date) => setBeginDate(date)}
+              value={beginDate}
+              placeholder="Begin Date"
+              disabledDate={(current) => current && current < dayjs().startOf("day") || (endDate ? current > endDate.endOf("day") : false)}
               />
             </div>
 
@@ -150,6 +163,7 @@ const TaskDetail: React.FC = () => {
                 onChange={(date) => setEndDate(date)}
                 value={endDate}
                 placeholder="End Date"
+                disabledDate={(current) => beginDate ? current < beginDate.startOf("day") : false}
               />
             </div>
           </div>
@@ -165,6 +179,36 @@ const TaskDetail: React.FC = () => {
           </div>
         </div>
       </form>
+      <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          contentLabel="Confirm Delete"
+          className="modal fixed inset-0 flex items-center justify-center"
+      >
+          <div className="bg-white p-6 rounded-md shadow-lg border-2 border-gray-300">
+              <h2 className="text-2xl font-bold mb-4">Confirm Delete</h2>
+              <p className="mb-4">Are you sure you want to delete this task?</p>
+              <div className="flex justify-end gap-2">
+                  <button 
+                      id="btn-cancel-delete"
+                      className="bg-gray-300 text-xl font-bold py-2 px-4 rounded-md hover:bg-gray-400"
+                      onClick={closeModal}
+                  >
+                      Cancel
+                  </button>
+                  <button 
+                      id="btn-confirm-delete"
+                      className="bg-red-700 text-xl font-bold text-white py-2 px-4 rounded-md hover:bg-red-500"
+                      onClick={() => {
+                          handleDelete();
+                          closeModal();
+                      }}
+                  >
+                      Delete
+                  </button>
+              </div>
+          </div>
+      </Modal>
     </div>
   );
 };

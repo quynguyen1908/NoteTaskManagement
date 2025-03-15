@@ -57,7 +57,7 @@ const CreateTask: React.FC = () => {
           </div>
           <div className="w-full h-96">
             <textarea
-              placeholder="description..."
+              placeholder="Description..."
               id="description"
               name="description"
               required
@@ -89,6 +89,7 @@ const CreateTask: React.FC = () => {
                 onChange={(date) => setBeginDate(date)}
                 value={beginDate}
                 placeholder="Begin Date"
+                disabledDate={(current) => current && current < dayjs().startOf("day") || (endDate ? current > endDate.endOf("day") : false)}
               />
             </div>
 
@@ -102,6 +103,7 @@ const CreateTask: React.FC = () => {
                 onChange={(date) => setEndDate(date)}
                 value={endDate}
                 placeholder="End Date"
+                disabledDate={(current) => beginDate ? current < beginDate.startOf("day") : false}
               />
             </div>
           </div>
