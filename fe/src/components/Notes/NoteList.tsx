@@ -38,7 +38,7 @@ const NoteList: React.FC = () => {
         <>
             <div className="font-bold text-4xl bg-gray-300 w-full h-1/5 flex justify-center items-center">YOUR NOTES</div>
             <div className="bg-white flex h-4/5 overflow-x-auto">
-                <ul className='flex w-full py-20 pl-20'>
+                <ul id='note-list' className='flex w-full py-20 pl-20'>
                     {notes.map((note) => (
                         <li 
                         className={`${getNoteBackgroundColor(note.status)} rounded-lg p-4 m-4 w-[200px] flex-shrink-0`}

@@ -120,12 +120,14 @@ const NoteDetail: React.FC = () => {
                         </div>
                         <div className="flex justify-end gap-2 w-full">
                             <button 
+                                id="btn-delete"
                                 className="w-1/10 bg-red-700 text-xl font-bold text-white py-2 px-4 rounded-md hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                                 onClick={openModal}
                             >
                                 Delete
                             </button>
                             <button 
+                                id="btn-save"
                                 className={`w-1/10 text-xl font-bold text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${isChanged ? 'bg-blue-700 hover:bg-blue-500 cursor-pointer' : 'bg-blue-300 cursor-not-allowed'}`}
                                 onClick={handleSave}
                                 disabled={!isChanged}
@@ -146,12 +148,14 @@ const NoteDetail: React.FC = () => {
                         <p className="mb-4">Are you sure you want to delete this note?</p>
                         <div className="flex justify-end gap-2">
                             <button 
+                                id="btn-cancel-delete"
                                 className="bg-gray-300 text-xl font-bold py-2 px-4 rounded-md hover:bg-gray-400"
                                 onClick={closeModal}
                             >
                                 Cancel
                             </button>
                             <button 
+                                id="btn-confirm-delete"
                                 className="bg-red-700 text-xl font-bold text-white py-2 px-4 rounded-md hover:bg-red-500"
                                 onClick={() => {
                                     handleDelete();
