@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 const router = express.Router();
 
 // Kết nối đến MongoDB
-mongoose.connect('mongodb://localhost:27017/note_task_db', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
+mongoose.connect('mongodb://localhost:27017/note_task_db')
+  .then(() => {
     console.log('Connected to MongoDB');
-}).catch((error) => {
+  })
+  .catch((error) => {
     console.error('Error connecting to MongoDB:', error);
-});
+  });
+
 
 // Định nghĩa Mongoose Schema và Model cho ghi chú
 const noteSchema = new mongoose.Schema({

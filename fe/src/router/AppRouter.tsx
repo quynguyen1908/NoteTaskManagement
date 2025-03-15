@@ -5,6 +5,9 @@ import CreatePage from "../pages/CreatePage";
 import CreateNote from "../components/Notes/CreateNote";
 import NoteList from "../components/Notes/NoteList";
 import NoteDetail from "../components/Notes/NoteDetail";
+import CreateTask from "../components/Tasks/CreateTask";
+import TaskList from "../components/Tasks/TaskList";
+import TaskDetail from "../components/Tasks/TaskDetail";
 
 const AppRouter: React.FC = () => {
   return (
@@ -14,8 +17,11 @@ const AppRouter: React.FC = () => {
             <Route index element={<CreatePage />} />
             <Route path="notes" element={<NoteList />} />
             <Route path="notes/:id" element={<NoteDetail />} />
-        </Route>
+            <Route path="tasks" element={<TaskList />} />
+            <Route path="tasks/:id" element={<TaskDetail/>} />
+        </Route>  
         <Route path="create-note" element={<CreateNote />} />
+        <Route path="create-task" element={<CreateTask/>} />
       </Routes>
     </Router>
   );
