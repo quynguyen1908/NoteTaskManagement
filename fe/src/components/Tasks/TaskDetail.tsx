@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "react-modal";
-import { RollbackOutlined, CalendarOutlined } from "@ant-design/icons";
+import { CalendarOutlined } from "@ant-design/icons";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import { Task } from "../../types/Task";
@@ -107,6 +107,7 @@ const TaskDetail: React.FC = () => {
         <div className="w-5/9 pr-8">
           <div className="w-full h-120">
             <textarea
+              required
               placeholder="Description..."
               id="description"
               value={description}
@@ -141,8 +142,8 @@ const TaskDetail: React.FC = () => {
           <div className="flex items-center mb-4 space-x-4">
             <div className="flex items-center space-x-2">
               <div className="flex flex-col items-center">
-                <CalendarOutlined className="text-8xl" />
-                <span className="text-xl font-bold">Begin</span>
+              <CalendarOutlined className="text-8xl" />
+              <span className="text-xl font-bold">Begin</span>
               </div>
               <DatePicker onChange={(date) => setBeginDate(date)} value={beginDate} placeholder="Begin Date" />
             </div>

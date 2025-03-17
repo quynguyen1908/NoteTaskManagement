@@ -82,6 +82,7 @@ const NoteDetail: React.FC = () => {
             <>
                 <div className="font-bold text-4xl bg-gray-300 w-full h-1/5 flex justify-center items-center">
                     <input 
+                        required
                         placeholder={note?.title}
                         type="text"
                         id="title"
@@ -95,6 +96,7 @@ const NoteDetail: React.FC = () => {
                 <div className="flex flex-col items-center justify-center h-4/5">
                     <div className="w-full h-1/2 mb-4">
                         <textarea
+                            required
                             placeholder={note?.content}
                             id="content"
                             name="content"
