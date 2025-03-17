@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Modal from "react-modal";
 import { RollbackOutlined, CalendarOutlined } from "@ant-design/icons";
 import { DatePicker } from "antd";
-import dayjs from "dayjs"; // Import để xử lý ngày tháng
+import dayjs from "dayjs";
 import { Task } from "../../types/Task";
 import { deleteTask, getTaskById, updateTask } from "../../api/taskApi";
 
@@ -17,6 +18,7 @@ const TaskDetail: React.FC = () => {
   const [status, setStatus] = useState<string>("pending");
   const [place, setPlace] = useState<string>("");
   const [isChanged, setIsChanged] = useState<boolean>(false);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,8 +56,7 @@ const TaskDetail: React.FC = () => {
     }
   }, [title, description, place, beginDate, endDate, status, task]);
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = async () => {
     if (id && task) {
       try {
         await updateTask(id, title, description, place, beginDate ? beginDate.toISOString() : "", endDate ? endDate.toISOString() : "", status);
@@ -77,26 +78,32 @@ const TaskDetail: React.FC = () => {
     }
   };
 
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="bg-white h-screen flex flex-col">
-     
-        <div className="font-bold text-4xl bg-gray-300 w-full h-1/5 flex justify-center items-center">
-          <input
-            placeholder="Title"
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            maxLength={50}
-            className="h-20 w-full text-center"
-          />
-        
+      <div className="font-bold text-4xl bg-gray-300 w-full h-1/5 flex justify-center items-center">
+        <input
+          placeholder="Title"
+          type="text"
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          maxLength={50}
+          className="h-20 w-full text-center"
+        />
       </div>
-      <form className="flex h-4/5 m-16" onSubmit={handleSave}>
+      <form className="flex h-4/5 m-16">
         <div className="w-5/9 pr-8">
           <div className="w-full h-120">
             <textarea
@@ -111,18 +118,21 @@ const TaskDetail: React.FC = () => {
         </div>
 
         <div className="w-4/9 flex flex-col items-center justify-start pt-4">
-        <div className="flex space-x-4 absolute bottom-4 right-4">
+          <div className="flex space-x-4 absolute bottom-4 right-4">
             <button
               type="button"
-              onClick={handleDelete}
+              onClick={openModal}
               className="bg-red-700 text-xl font-bold text-white py-2 px-4 rounded-md hover:bg-red-500"
             >
               Delete
             </button>
             <button
-              type="submit"
+              type="button"
               onClick={handleSave}
-              className="bg-blue-700 text-xl font-bold text-white py-2 px-4 rounded-md hover:bg-blue-500"
+              disabled={!isChanged}
+              className={`text-xl font-bold text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
+                isChanged ? "bg-blue-700 hover:bg-blue-500 cursor-pointer" : "bg-blue-300 cursor-not-allowed"
+              }`}
             >
               Save
             </button>
@@ -134,11 +144,7 @@ const TaskDetail: React.FC = () => {
                 <CalendarOutlined className="text-8xl" />
                 <span className="text-xl font-bold">Begin</span>
               </div>
-              <DatePicker
-                onChange={(date) => setBeginDate(date)}
-                value={beginDate}
-                placeholder="Begin Date"
-              />
+              <DatePicker onChange={(date) => setBeginDate(date)} value={beginDate} placeholder="Begin Date" />
             </div>
 
             <div className="flex items-center space-x-2">
@@ -146,11 +152,7 @@ const TaskDetail: React.FC = () => {
                 <CalendarOutlined className="text-8xl" />
                 <span className="text-xl font-bold">End</span>
               </div>
-              <DatePicker
-                onChange={(date) => setEndDate(date)}
-                value={endDate}
-                placeholder="End Date"
-              />
+              <DatePicker onChange={(date) => setEndDate(date)} value={endDate} placeholder="End Date" />
             </div>
           </div>
 
@@ -165,6 +167,32 @@ const TaskDetail: React.FC = () => {
           </div>
         </div>
       </form>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Confirm Delete"
+        className="modal fixed inset-0 flex items-center justify-center"
+      >
+        <div className="bg-white p-6 rounded-md shadow-lg border-2 border-gray-300">
+          <h2 className="text-2xl font-bold mb-4">Confirm Delete</h2>
+          <p className="mb-4">Are you sure you want to delete this task?</p>
+          <div className="flex justify-end gap-2">
+            <button className="bg-gray-300 text-xl font-bold py-2 px-4 rounded-md hover:bg-gray-400" onClick={closeModal}>
+              Cancel
+            </button>
+            <button
+              className="bg-red-700 text-xl font-bold text-white py-2 px-4 rounded-md hover:bg-red-500"
+              onClick={() => {
+                handleDelete();
+                closeModal();
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
