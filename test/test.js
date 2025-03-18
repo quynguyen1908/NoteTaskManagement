@@ -7,7 +7,7 @@ async function openGoogle() {
     console.log("Open Google successfully!");
 
     // Đợi 5 giây rồi đóng trình duyệt
-    await driver.sleep(5000);
+  
     await driver.quit();
 }
 
