@@ -48,7 +48,7 @@ const NoteDetail: React.FC = () => {
         if (id && note) {
             try {
                 await updateNote(id, title, content, status);
-                navigate("/notes");
+                navigate("/home/notes");
             } catch (error) {
                 console.error("Error updating note:", error);
             }
@@ -59,7 +59,7 @@ const NoteDetail: React.FC = () => {
         if (id) {
             try {
                 await deleteNote(id);
-                navigate("/notes");
+                navigate("/home/notes");
             } catch (error) {
                 console.error("Error deleting note:", error);
             }

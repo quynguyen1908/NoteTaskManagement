@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getAllTasks } from '../../api/taskApi';
+import { getTasksByUserId } from '../../api/taskApi';
+import { getUserInfo } from '../../api/authApi';
 import { Task } from '../../types/Task';
 import { NavLink } from 'react-router-dom';
 
@@ -10,7 +11,12 @@ const TaskList: React.FC = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const tasks = await getAllTasks();
+                const email = localStorage.getItem('email');
+                if (!email) {
+                    throw new Error('User email not found in local storage.');
+                }
+                const userInfo = await getUserInfo(email);
+                const tasks = await getTasksByUserId(userInfo._id);
                 setTasks(tasks);
             } catch (error) {
                 console.error('Error fetching tasks:', error);
@@ -44,7 +50,7 @@ const TaskList: React.FC = () => {
                         className={`${getTaskBackgroundColor(task.status)} rounded-lg p-4 m-4 w-[200px] flex-shrink-0`}
                         key={task._id}
                         >
-                            <NavLink to={`/tasks/${task._id}`} className='flex flex-col gap-10 h-full'>
+                            <NavLink to={`/home/tasks/${task._id}`} className='flex flex-col gap-10 h-full'>
                                 <div className='font-bold text-xl text-center overflow-hidden truncate'>
                                     {task.title}
                                 </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getAllNotes } from '../../api/noteApi';
+import { getNotesByUserId } from '../../api/noteApi';
+import { getUserInfo } from '../../api/authApi';
 import { Note } from '../../types/Note';
 import { NavLink } from 'react-router-dom';
 
@@ -10,7 +11,12 @@ const NoteList: React.FC = () => {
     useEffect(() => {
         const fetchNotes = async () => {
             try {
-                const notes = await getAllNotes();
+                const email = localStorage.getItem('email');
+                if (!email) {
+                    throw new Error('User email not found in local storage.');
+                }
+                const userInfo = await getUserInfo(email);
+                const notes = await getNotesByUserId(userInfo._id);
                 setNotes(notes);
             } catch (error) {
                 console.error('Error fetching notes:', error);
@@ -44,7 +50,7 @@ const NoteList: React.FC = () => {
                         className={`${getNoteBackgroundColor(note.status)} rounded-lg p-4 m-4 w-[200px] flex-shrink-0`}
                         key={note._id}
                         >
-                            <NavLink to={`/notes/${note._id}`} className='flex flex-col gap-10 h-full'>
+                            <NavLink to={`/home/notes/${note._id}`} className='flex flex-col gap-10 h-full'>
                                 <div className='font-bold text-xl text-center overflow-hidden truncate'>
                                     {note.title}
                                 </div>

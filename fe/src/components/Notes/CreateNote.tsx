@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { RollbackOutlined } from "@ant-design/icons";
 import { createNote } from "../../api/noteApi";
+import { getUserInfo } from "../../api/authApi";
 
 const CreateNote: React.FC = () => {
     const [title, setTitle] = useState("");
@@ -11,8 +12,13 @@ const CreateNote: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await createNote(title, content);
-            navigate("/notes");
+            const email = localStorage.getItem("email");
+            if (!email) {
+                throw new Error("User email not found in local storage.");
+            }
+            const userInfo = await getUserInfo(email);
+            await createNote(title, content, userInfo._id);
+            navigate("/home/notes");
         } catch (error) {
             console.error("Error creating note:", error);
         }
@@ -21,7 +27,7 @@ const CreateNote: React.FC = () => {
     return (
         <div className="bg-white h-screen flex flex-col">
             <div className="grid grid-cols-[1fr_10fr] h-1/5 w-full">
-                <NavLink to={"/"} className={"flex items-center justify-center"}>
+                <NavLink to={"/home"} className={"flex items-center justify-center"}>
                     <RollbackOutlined className="text-8xl" />
                 </NavLink>
                 <div className="bg-gray-300 flex items-center justify-center font-bold text-4xl">

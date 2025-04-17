@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 
@@ -14,13 +15,30 @@ const taskSchema = new mongoose.Schema({
     createdDate: { type: Date, default: Date.now },
     updatedDate: { type: Date, default: Date.now },
     completed: { type: Boolean, default: false },
-    deleted: { type: Boolean, default: false }
+    deleted: { type: Boolean, default: false },
+    userId: { type: mongoose.Schema.Types.ObjectId, required: true },
 });
 
 const Task = mongoose.model('Task', taskSchema);
 
+// Middleware để xác thực token JWT
+const authenticateToken = (req, res, next) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ message: 'Không có token, vui lòng đăng nhập!' });
+    }
+
+    jwt.verify(token, 'your_jwt_secret', (err, user) => {
+        if (err) {
+            return res.status(403).json({ message: 'Token không hợp lệ!' });
+        }
+        req.user = user;
+        next();
+    });
+};
+
 // Tạo task mới
-router.post('/tasks/new', async (req, res) => {
+router.post('/tasks/new', authenticateToken, async (req, res) => {
     try {
         const task = new Task({
             title: req.body.title,
@@ -28,6 +46,7 @@ router.post('/tasks/new', async (req, res) => {
             place  : req.body.place,
             beginDate: req.body.beginDate,
             endDate: req.body.endDate,
+            userId: req.body.userId,
         });
         const savedTask = await task.save();
         res.json(savedTask);
@@ -37,7 +56,7 @@ router.post('/tasks/new', async (req, res) => {
 });
 
 // Lấy tất cả tasks
-router.get('/tasks', async (req, res) => {
+router.get('/tasks', authenticateToken, async (req, res) => {
     try {
         const tasks = await Task.find({ deleted: false });
         res.json(tasks);
@@ -46,8 +65,18 @@ router.get('/tasks', async (req, res) => {
     }
 });
 
+// Lấy tất cả tasks theo id người dùng
+router.get('/tasks/user/:userId', authenticateToken, async (req, res) => {
+    try {
+        const tasks = await Task.find({ userId: req.params.userId, deleted: false });
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 // Lấy task theo id
-router.get('/tasks/:id', async (req, res) => {
+router.get('/tasks/:id', authenticateToken, async (req, res) => {
     try {
         const task = await Task.findById(req.params.id);
         res.json(task);
@@ -57,7 +86,7 @@ router.get('/tasks/:id', async (req, res) => {
 });
 
 // Cập nhật task theo id
-router.put('/tasks/update/:id', async (req, res) => {
+router.put('/tasks/update/:id', authenticateToken, async (req, res) => {
     try {
         const task = await Task.findById(req.params.id);
         task.title = req.body.title;
@@ -75,7 +104,7 @@ router.put('/tasks/update/:id', async (req, res) => {
 });
 
 // Xóa task theo id
-router.put('/tasks/delete/:id', async (req, res) => {
+router.put('/tasks/delete/:id', authenticateToken, async (req, res) => {
     try {
         const task = await Task.findById(req.params.id);
         task.deleted = true;

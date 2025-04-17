@@ -8,12 +8,14 @@ import NoteDetail from "../components/Notes/NoteDetail";
 import CreateTask from "../components/Tasks/CreateTask";
 import TaskList from "../components/Tasks/TaskList";
 import TaskDetail from "../components/Tasks/TaskDetail";
+import AuthPage from "../pages/AuthPage";
 
 const AppRouter: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />}>
+        <Route path="/" element={<AuthPage />} />
+        <Route path="/home" element={<Home />}>
             <Route index element={<CreatePage />} />
             <Route path="notes" element={<NoteList />} />
             <Route path="notes/:id" element={<NoteDetail />} />

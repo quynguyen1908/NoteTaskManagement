@@ -60,7 +60,7 @@ const TaskDetail: React.FC = () => {
     if (id && task) {
       try {
         await updateTask(id, title, description, place, beginDate ? beginDate.toISOString() : "", endDate ? endDate.toISOString() : "", status);
-        navigate("/tasks");
+        navigate("/home/tasks");
       } catch (error) {
         console.error("Error updating task:", error);
       }
@@ -71,7 +71,7 @@ const TaskDetail: React.FC = () => {
     if (id) {
       try {
         await deleteTask(id);
-        navigate("/tasks");
+        navigate("/home/tasks");
       } catch (error) {
         console.error("Error deleting task:", error);
       }

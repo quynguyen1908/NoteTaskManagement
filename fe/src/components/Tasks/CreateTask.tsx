@@ -4,6 +4,7 @@ import { RollbackOutlined, CalendarOutlined } from "@ant-design/icons";
 import { createTask } from "../../api/taskApi";
 import { DatePicker } from "antd";
 import dayjs from 'dayjs';
+import { getUserInfo } from "../../api/authApi";
 
 const CreateTask: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -16,14 +17,20 @@ const CreateTask: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-        await createTask(
+          const email = localStorage.getItem("email");
+          if (!email) {
+            throw new Error("User email not found in local storage.");
+          }
+          const userInfo = await getUserInfo(email);
+          await createTask(
             title,
             description,
             place,
             beginDate ? dayjs(beginDate).format('YYYY-MM-DD') : '',
-            endDate ? dayjs(endDate).format('YYYY-MM-DD') : ''
-        );
-        navigate("/tasks");
+            endDate ? dayjs(endDate).format('YYYY-MM-DD') : '',
+            userInfo._id
+          );
+          navigate("/home/tasks");
         } catch (error) {
         console.error("Error creating task:", error);
         }
@@ -32,7 +39,7 @@ const CreateTask: React.FC = () => {
   return (
     <div className="bg-white h-screen flex flex-col">
       <div className="grid grid-cols-[1fr_10fr] h-1/5 w-full">
-        <NavLink to={"/"} className={"flex items-center justify-center"}>
+        <NavLink to={"/home"} className={"flex items-center justify-center"}>
           <RollbackOutlined className="text-8xl" />
         </NavLink>
         <div className="bg-gray-300 flex items-center justify-center font-bold text-4xl">
